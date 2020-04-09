@@ -27,6 +27,12 @@ For running test type:
 ```
 make test
 ```
+## Send test request
+For sending test request via curl type:
+```
+make post
+```
+
 
 
 

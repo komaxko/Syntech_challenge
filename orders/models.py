@@ -1,10 +1,10 @@
 from django.db import models
 
-from base.models import (TimeStampedAbstractModel, EditorAbstractModel)
+from base.models import (UUIDAbstractModel,TimeStampedAbstractModel, EditorAbstractModel)
 from tables.models import Table
 
 
-class Order(TimeStampedAbstractModel, EditorAbstractModel):
+class Order(UUIDAbstractModel,TimeStampedAbstractModel, EditorAbstractModel):
     # allow unregistered users create objects
     created_by = models.UUIDField(null=True, blank=True)
     modified_by = models.UUIDField(null=True, blank=True)

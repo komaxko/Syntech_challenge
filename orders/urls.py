@@ -15,6 +15,6 @@ order_detail = OrderViewSet.as_view({
 })
 
 urlpatterns = [
-    path(r'<int:pk>/', order_detail),
+    path(r'<uuid:pk>/', order_detail),
     path(r'', orders),
 ]
