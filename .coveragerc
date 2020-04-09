@@ -1,0 +1,16 @@
+[run]
+omit =
+    */__init__.py
+    */migrations/*
+    */admin.py
+
+[report]
+show_missing = True
+omit =
+    */__init__.py
+    */migrations/*
+    */admin.py
+    */models.py
+    */helpers.py
+    */utils.py
+    */permissions.py

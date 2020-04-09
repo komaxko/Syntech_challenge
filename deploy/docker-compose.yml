@@ -1,0 +1,63 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:3.0
+    volumes:
+      - redis:/redis
+    ports:
+      - 6379:6379
+    command: redis-server
+
+  api:
+    image: python:3.7-slim-stretch
+    build:
+      context: ..
+      dockerfile: ./deploy/Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ../:/home/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    environment:
+      DJANGO_SECRET_KEY: local
+      REDIS_HOSTNAME: redis
+      REDIS_PORT: 6379
+      REDIS_DB_NUMBER: 1
+    command: >
+      bash -c "python ./manage.py makemigrations --configuration=Local &&
+      ./manage.py migrate --configuration=Local &&
+      ./manage.py create_admin --configuration=Local &&
+      ./manage.py populate_data --configuration=Local &&
+      ./manage.py runserver 0.0.0.0:8000 --configuration=Local"
+
+  test:
+    image: python:3.7-stretch
+    depends_on:
+      - db
+      - redis
+    environment:
+      DJANGO_CONFIGURATION: Test
+      DJANGO_SECRET_KEY: local
+      REDIS_HOSTNAME: redis
+      REDIS_PORT: 6379
+      REDIS_DB_NUMBER: 1
+    command: bash -c "while !</dev/tcp/db/5432; do echo Waiting Postgres; sleep 1; done; python manage.py test"
+
+volumes:
+    redis:
+      driver: local
+
